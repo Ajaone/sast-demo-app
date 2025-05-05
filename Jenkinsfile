@@ -1,19 +1,25 @@
-pipeline { 
-    agent any 
- 
-    stages { 
-        stage('Checkout') { 
-            steps {                 git url: 'https://github.com/your-username/sast-demo-app.git', branch: 'master'             } 
-        } 
-        stage('Install Dependencies') {             steps { 
-                sh 'pip install bandit' 
-            } 
-        } 
-        stage('SAST Analysis') { 
-            steps { 
-                sh 'bandit -f xml -o bandit-output.xml -r . || true' 
-                recordIssues tools: [bandit(pattern: 'bandit-output.xml')] 
-            } 
-        } 
-    } 
-} 
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'git@github.com:Ajaone/sast-demo-app.git', 
+                     branch: 'master', 
+                     credentialsId: 'jenkins-ssh-key'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'python3 -m venv venv'
+                sh '. venv/bin/activate && pip install bandit'
+            }
+        }
+        stage('SAST Analysis') {
+            steps {
+                sh '. venv/bin/activate && bandit -f xml -o bandit-output.xml -r . || true'
+                recordIssues tools: [bandit(pattern: 'bandit-output.xml')]
+            }
+        }
+    }
+}
