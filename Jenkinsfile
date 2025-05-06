@@ -4,7 +4,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Gunakan URL HTTPS biasa tanpa credential
                 git url: 'https://github.com/Ajaone/sast-demo-app.git', 
                      branch: 'master'
             }
